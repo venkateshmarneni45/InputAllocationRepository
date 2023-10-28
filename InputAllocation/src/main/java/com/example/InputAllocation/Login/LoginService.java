@@ -17,8 +17,9 @@ public class LoginService {
 	public Map<String,Object> login(LoginPojo loginPojo) {
 		Map<String,Object> m=new HashMap<>();
 		try {
-			if(loginRepository.login(loginPojo)==1) {
-				m.put("message", loginPojo.getUsername()+" logged in successful");
+			Map<String,Object> profile=loginRepository.login(loginPojo);
+			if((boolean)profile.get("flag")==true) {
+				m.put("message",profile.get("profiledata"));
 				m.put("flag", true);
 				m.put("status", 1);
 				logger.debug(loginPojo.getUsername()+" logged in successful");
@@ -27,7 +28,6 @@ public class LoginService {
 			m.put("message","Invalid User Credentials");
 			m.put("flag", true);
 			m.put("status", 0);
-			logger.debug(loginPojo.getUsername()+" Invalid User Credentials");
 		}catch(Exception e){
 			e.printStackTrace();
 			m.put("message","Error while login");
