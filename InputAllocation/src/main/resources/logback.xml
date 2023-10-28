@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<property name="DIRECTORY" value="C:/HeteroInputAllocations" />
+	<property name="DIRECTORY"
+		value="C:/HeteroInputAllocationLogs" />
 	<appender name="CONSOLE"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -10,10 +11,10 @@
 
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${DIRECTORY}/TeleMedicine.log</file>
+		<file>${DIRECTORY}/InputAllocation.log</file>
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${DIRECTORY}/TeleMedicine.%d{yyyy-MM-dd}.log
+			<fileNamePattern>${DIRECTORY}/InputAllocation.%d{yyyy-MM-dd}.log
 			</fileNamePattern>
 			<maxHistory>365</maxHistory>
 		</rollingPolicy>
