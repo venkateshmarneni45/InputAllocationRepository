@@ -8,7 +8,6 @@ public class SaleExecutives {
 	private String EmpCode;
 	private String EmpName;
 	private String HQCode;
-	private String HQName;
 	private List<Map<String, Object>> inputs = new ArrayList<>();
 
 	public String getEmpCode() {
@@ -35,14 +34,6 @@ public class SaleExecutives {
 		HQCode = hQCode;
 	}
 
-	public String getHQName() {
-		return HQName;
-	}
-
-	public void setHQName(String hQName) {
-		HQName = hQName;
-	}
-
 	public List<Map<String, Object>> getInputs() {
 		return inputs;
 	}
@@ -53,7 +44,7 @@ public class SaleExecutives {
 
 	@Override
 	public String toString() {
-		return "SaleExecutives [EmpCode=" + EmpCode + ", EmpName=" + EmpName + ", HQCode=" + HQCode + ", HQName="
-				+ HQName + ", inputs=" + inputs + "]";
+		return "SaleExecutives [EmpCode=" + EmpCode + ", EmpName=" + EmpName + ", HQCode=" + HQCode + ", inputs="
+				+ inputs + "]";
 	}
 }
