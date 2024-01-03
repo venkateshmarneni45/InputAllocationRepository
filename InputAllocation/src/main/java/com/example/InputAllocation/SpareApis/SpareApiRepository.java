@@ -202,8 +202,7 @@ public class SpareApiRepository {
 		int divisioncode = (int) data.get("divisioncode");
 		int year = (int) data.get("year");
 		int month = (int) data.get("month");
-
-		String query = "Insert into tbl_allocated_inputs values(?,?,?,?,?,?,?)";
+		String query = "Insert into tbl_allocated_inputs(divisioncode,hqcode,year,month,empcode,inputid,inputqty) values(?,?,?,?,?,?,?)";
 
 		for (Map<String, Object> hq : (List<Map<String, Object>>) data.get("hqlist")) {
 			String hqcode = (String) hq.get("hqcode");
@@ -220,7 +219,7 @@ public class SpareApiRepository {
 						stmt.setInt(4, month);
 						stmt.setString(5, empcode);
 						stmt.setString(6, (String) input.get("inputid"));
-						stmt.setInt(7, (int) input.get("inputqty"));
+						stmt.setInt(7, (int) input.get("allocatedinputqty"));
 						stmt.addBatch();
 					}
 					return stmt.executeBatch();
