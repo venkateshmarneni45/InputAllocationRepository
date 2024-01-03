@@ -171,14 +171,16 @@ public class SpareApiRepository {
 	@Transactional(rollbackFor = Throwable.class)
 	public int updateInputMaterials(Map<String, Object> data) {
 		String query = "update tbl_inputs set ablqty=? where inputid=?";
+		String totalQty = "select ablqty from tbl_inputs where inputid=?";
 
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> inputList = (List<Map<String, Object>>) (data.get("inputslist"));
-
 		int[] updateCounts = jdbcTemplate.execute((Connection con) -> {
 			PreparedStatement stmt = con.prepareStatement(query);
 			for (Map<String, Object> input : inputList) {
-				stmt.setInt(1, (int) input.get("inputqty"));
+				stmt.setInt(1,
+						jdbcTemplate.queryForObject(totalQty, Integer.class, new Object[] { input.get("inputid") })
+								- (int) input.get("inputqty"));
 				stmt.setString(2, (String) input.get("inputid"));
 				stmt.addBatch();
 			}
