@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +109,7 @@ public class SpareApiRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, List<SaleExecutives>> allocateInputsPerHq(Map<String, Object> data) {
+	public List<Map<String, Object>> allocateInputsPerHq(Map<String, Object> data) {
 		String query = "select EmpCode,EmpName,HQCode,HQName from tbl_sale_executives where hqcode in(:hqlist) and dno=1";
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("hqlist", data.get("hqlist"));
@@ -118,7 +119,6 @@ public class SpareApiRepository {
 			se.setEmpCode(rs.getString("EmpCode"));
 			se.setEmpName(rs.getString("EmpName"));
 			se.setHQCode(rs.getString("HQCode"));
-			se.setHQName(rs.getString("HQName"));
 			return se;
 		});
 
@@ -144,13 +144,24 @@ public class SpareApiRepository {
 				for (SaleExecutives se : map.get(hqinputsmap.get("hqcode"))) {
 					Map<String, Object> m = new HashMap<>();
 					m.put("inputcode", hqinput.get("inputcode"));
-					m.put("inputqty", perhead);
+					m.put("inputname", hqinput.get("inputname"));
+					m.put("inputqty", quantity);
+					m.put("allocatedinputqty", perhead);
 					m.put("remainqty", quantity - (perhead * seCount));
 					se.getInputs().add(m);
 				}
 			}
 		}
-		return map;
+
+		List<Map<String, Object>> allocatedData = new ArrayList<>();
+		map.keySet().parallelStream().forEach(hqcode -> {
+			Map<String, Object> m = new LinkedHashMap<>();
+			m.put("hqcode", hqcode);
+			m.put("tseData", map.get(hqcode));
+			allocatedData.add(m);
+		});
+		return allocatedData;
+
 	}
 
 	public List<Map<String, Object>> fetchInputMaterials() {
