@@ -119,6 +119,7 @@ public class SpareApiRepository {
 			se.setEmpCode(rs.getString("EmpCode"));
 			se.setEmpName(rs.getString("EmpName"));
 			se.setHQCode(rs.getString("HQCode"));
+			se.setHQName(rs.getString("HQName"));
 			return se;
 		});
 
@@ -157,6 +158,7 @@ public class SpareApiRepository {
 		map.keySet().parallelStream().forEach(hqcode -> {
 			Map<String, Object> m = new LinkedHashMap<>();
 			m.put("hqcode", hqcode);
+			m.put("hqname", map.get(hqcode).get(0).getHQName());
 			m.put("tseData", map.get(hqcode));
 			allocatedData.add(m);
 		});
