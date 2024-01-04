@@ -119,6 +119,7 @@ public class SpareApiRepository {
 			se.setEmpCode(rs.getString("EmpCode"));
 			se.setEmpName(rs.getString("EmpName"));
 			se.setHQCode(rs.getString("HQCode"));
+			se.setHQName(rs.getString("HQName"));
 			return se;
 		});
 
@@ -157,6 +158,7 @@ public class SpareApiRepository {
 		map.keySet().parallelStream().forEach(hqcode -> {
 			Map<String, Object> m = new LinkedHashMap<>();
 			m.put("hqcode", hqcode);
+			m.put("hqname", map.get(hqcode).get(0).getHQName());
 			m.put("tseData", map.get(hqcode));
 			allocatedData.add(m);
 		});
@@ -171,14 +173,16 @@ public class SpareApiRepository {
 	@Transactional(rollbackFor = Throwable.class)
 	public int updateInputMaterials(Map<String, Object> data) {
 		String query = "update tbl_inputs set ablqty=? where inputid=?";
+		String totalQty = "select ablqty from tbl_inputs where inputid=?";
 
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> inputList = (List<Map<String, Object>>) (data.get("inputslist"));
-
 		int[] updateCounts = jdbcTemplate.execute((Connection con) -> {
 			PreparedStatement stmt = con.prepareStatement(query);
 			for (Map<String, Object> input : inputList) {
-				stmt.setInt(1, (int) input.get("inputqty"));
+				stmt.setInt(1,
+						jdbcTemplate.queryForObject(totalQty, Integer.class, new Object[] { input.get("inputid") })
+								- (int) input.get("inputqty"));
 				stmt.setString(2, (String) input.get("inputid"));
 				stmt.addBatch();
 			}
@@ -202,8 +206,7 @@ public class SpareApiRepository {
 		int divisioncode = (int) data.get("divisioncode");
 		int year = (int) data.get("year");
 		int month = (int) data.get("month");
-
-		String query = "Insert into tbl_allocated_inputs values(?,?,?,?,?,?,?)";
+		String query = "Insert into tbl_allocated_inputs(divisioncode,hqcode,year,month,empcode,inputid,inputqty) values(?,?,?,?,?,?,?)";
 
 		for (Map<String, Object> hq : (List<Map<String, Object>>) data.get("hqlist")) {
 			String hqcode = (String) hq.get("hqcode");
@@ -220,7 +223,7 @@ public class SpareApiRepository {
 						stmt.setInt(4, month);
 						stmt.setString(5, empcode);
 						stmt.setString(6, (String) input.get("inputid"));
-						stmt.setInt(7, (int) input.get("inputqty"));
+						stmt.setInt(7, (int) input.get("allocatedinputqty"));
 						stmt.addBatch();
 					}
 					return stmt.executeBatch();
