@@ -182,7 +182,7 @@ public class SpareApiRepository {
 			for (Map<String, Object> input : inputList) {
 				stmt.setInt(1,
 						jdbcTemplate.queryForObject(totalQty, Integer.class, new Object[] { input.get("inputid") })
-								- (int) input.get("inputqty"));
+								- (int) input.get("allocatedinputqty"));
 				stmt.setString(2, (String) input.get("inputid"));
 				stmt.addBatch();
 			}
